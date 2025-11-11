@@ -1,0 +1,26 @@
+Who are you working with?
+Sean Ammon and Jace Stevenson
+
+What will you all be creating for your demo?
+A simulation of a ocean plane with waves and a water/liquid shader
+
+Be as detailed as you can. List out specific features/techniques.
+There will be many settings for the wave simulation, with some being:
+ - Wave Detail
+ - Wave Size
+ - Shader Color
+ - Shader Reflection (maybe reflections?)
+ - Basic Foam creation
+
+What technology (engine,libraries,etc) are you using?
+ - OpenGL w/ GLAD and GLFW
+ - Object Loading Library (to put stuff in the water :D)
+
+How will you divide the labor between your group members?
+We will work together on the project so we both understand the function of the simulation, but Jace will mostly focus on the vertex generation and shading, and Sean will focus on the fragment shader.
+
+Do some initial research into your topics and include a link to at least 2 resources that you will reference. This can be a blog post, video, book, paper, etc. 
+ - https://www.researchgate.net/publication/379379182_Real-Time_Wave_Simulation_of_Large-Scale_Open_Sea_Based_on_Self-Adaptive_Filtering_and_Screen_Space_Level_of_Detail
+ - https://www.youtube.com/watch?v=PH9q0HNBjT4
+ - https://developer.nvidia.com/gpugems/gpugems/part-i-natural-effects/chapter-1-effective-water-simulation-physical-models
+ - https://www.redblobgames.com/maps/terrain-from-noise/
