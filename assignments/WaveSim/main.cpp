@@ -92,18 +92,10 @@ int main()
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
     // Creating the Rendered Object
-    obj::Object torus("torus", mesh::createTorus(0.75f, 0.25, 16, 10), &meshShader, glm::vec3(-2.0f, -0.75f, 0));
-    obj::Object sphere("sphere", mesh::createSphere(1.0f, 16), &meshShader);
-    obj::Object plane("plane", mesh::createPlane(8.0f, 8.0f, 4), &meshShader, glm::vec3(0.5f, -1, 0));
-    obj::Object cylinder("cylinder", mesh::createCylinder(0.75f, 2.0f, 10), &meshShader, glm::vec3(2, 0, 0));
-    obj::Object cube("cube", mesh::createCube(1.5f, 1.5f, 1.5f, 3), &meshShader, glm::vec3(0, -0.5f, 2));
+    obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 16), &meshShader, glm::vec3(0));
 
     // Creating pointers to the primitive's settings
-    TorusMesh* torusPtr = dynamic_cast<TorusMesh*>(torus.getMesh());
-    SphereMesh* spherePtr = dynamic_cast<SphereMesh*>(sphere.getMesh());
-    PlaneMesh* planePtr = dynamic_cast<PlaneMesh*>(plane.getMesh());
-    CylinderMesh* cylinderPtr = dynamic_cast<CylinderMesh*>(cylinder.getMesh());
-    CubeMesh* cubePtr = dynamic_cast<CubeMesh*>(cube.getMesh());
+    PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());
 
     // Objects Material Settings
     float ambient = 0.5f;
@@ -189,13 +181,8 @@ int main()
         meshShader.setFloat("material.shininess", shininess);
 
         // Drawing the Meshes
-        earth.Bind(0);
-        sphere.DrawMesh(renderLines, renderPoints);
         pattern.Bind(0);
-        torus.DrawMesh(renderLines, renderPoints);
-        plane.DrawMesh(renderLines, renderPoints);
-        cylinder.DrawMesh(renderLines, renderPoints);
-        cube.DrawMesh(renderLines, renderPoints);
+        wavePlane.DrawMesh(renderLines, renderPoints);
 
         // ImGUI Rendering
         ImGui_ImplGlfw_NewFrame();
@@ -246,37 +233,12 @@ int main()
             ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 1024.0f);
         }
 
-        // Primitives Settings
+        // Plane Settings
         if (ImGui::CollapsingHeader("Plane Settings"))
         {
-            ImGui::DragFloat("Width", &(planePtr->width), 0.1f, 0.0f);
-            ImGui::DragFloat("Height", &(planePtr->height), 0.1f, 0.0f);
-            ImGui::DragInt("Subdivisions", &(planePtr->subdivisions), 1, 1, 32);
-        }
-        if (ImGui::CollapsingHeader("Cube Settings"))
-        {
-            ImGui::DragFloat("Width", &(cubePtr->width), 0.1f, 0.0f);
-            ImGui::DragFloat("Height", &(cubePtr->height), 0.1f, 0.0f);
-            ImGui::DragFloat("Length", &(cubePtr->length), 0.1f, 0.0f);
-            ImGui::DragInt("Subdivisions", &(cubePtr->subdivisions), 1, 1, 32);
-        }
-        if (ImGui::CollapsingHeader("Sphere Settings"))
-        {
-            ImGui::DragFloat("Radius", &(spherePtr->radius), 0.1f, 0.0f);
-            ImGui::DragInt("Subdivisions", &(spherePtr->subdivisions), 1, 1, 32);
-        }
-        if (ImGui::CollapsingHeader("Cylinder Settings"))
-        {
-            ImGui::DragFloat("Radius", &(cylinderPtr->radius), 0.1f, 0.0f);
-            ImGui::DragFloat("Height", &(cylinderPtr->height), 0.1f, 0.0f);
-            ImGui::DragInt("Subdivisions", &(cylinderPtr->subdivisions), 1, 1, 32);
-        }
-        if (ImGui::CollapsingHeader("Torus Settings"))
-        {
-            ImGui::DragFloat("Major Radius", &(torusPtr->majorRadius), 0.1f, 0.0f);
-            ImGui::DragFloat("Minor Radius", &(torusPtr->minorRadius), 0.1f, 0.0f);
-            ImGui::DragInt("Major Subdivisions", &(torusPtr->majorSegments), 1, 1, 32);
-            ImGui::DragInt("Minor Subdivisions", &(torusPtr->minorSegments), 1, 1, 32);
+            ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.0f);
+            ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.0f);
+            ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 32);
         }
 
         ImGui::End();

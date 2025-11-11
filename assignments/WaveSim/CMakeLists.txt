@@ -1,5 +1,5 @@
 #Change this for each assignment!
-set(APPNAME assignment6)
+set(APPNAME WaveSim)
 
 #additional source files will have to be added here
 add_executable(${APPNAME} main.cpp    )
