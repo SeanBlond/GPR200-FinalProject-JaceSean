@@ -88,11 +88,25 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // Creating Shader(s)
-    shdr::Shader meshShader("assets/shaders/cubeVert.glsl", "assets/shaders/cubeFrag.glsl");
+    shdr::Shader waveShader("assets/shaders/waveVert.glsl", "assets/shaders/cubeFrag.glsl");
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
+    glm::vec2 direction = glm::vec2(1.0f, 1.0f);
+    float waveLength = 1.0f;
+    float steepness = 1.0f;
+    float amplitude = 1.0f;
+    float speed = 1.0f;
+    int detail = 1;
+
+    waveShader.setVec2("hiWave.direction", direction);
+    waveShader.setFloat("hiWave.waveLength", waveLength);
+    waveShader.setFloat("hiWave.steepness", steepness);
+    waveShader.setFloat("hiWave.amplitude", amplitude);
+    waveShader.setFloat("hiWave.speed", speed);
+    //waveShader.setInt("hiWave.detail", detail);
+
     // Creating the Rendered Object
-    obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 16), &meshShader, glm::vec3(0));
+    obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 16), &waveShader, glm::vec3(0));
 
     // Creating pointers to the primitive's settings
     PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());
@@ -114,6 +128,8 @@ int main()
     shdr::Texture2D pattern("assets/lobster-pattern.jpg", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
     shdr::Texture2D earth("assets/earth-map.jpg", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
 
+
+
     // Projection Matrix
     glm::mat4 projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 100.0f);
     glm::mat4 view = camera.getViewMatrix();
@@ -133,6 +149,7 @@ int main()
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        waveShader.setFloat("hiWave.time", glfwGetTime());
 
         // Perspective/View Transformation Matrices
         if (camera.getDoPerspective())
@@ -151,10 +168,10 @@ int main()
         view = camera.getViewMatrix();
 
         // Cube Texture Management
-        meshShader.useShader();
-        meshShader.setFloat("time", glfwGetTime());
-        meshShader.setInt("texture1", 0);
-        
+        waveShader.useShader();
+        waveShader.setFloat("time", glfwGetTime());
+        waveShader.setInt("texture1", 0);
+
         // Drawing the Light
         light.shader->useShader();
         light.shader->setMat4("projection", projection);
@@ -164,21 +181,21 @@ int main()
         light.DrawMesh(renderLines, renderPoints);
 
         // Mesh Settings
-        meshShader.useShader();
-        meshShader.setMat4("projection", projection);
-        meshShader.setMat4("view", view);
-        meshShader.setInt("renderOption", selectedRenderOption);
+        waveShader.useShader();
+        waveShader.setMat4("projection", projection);
+        waveShader.setMat4("view", view);
+        waveShader.setInt("renderOption", selectedRenderOption);
 
         // Light Settings
-        meshShader.setVec3("viewPos", camera.getPosition());
-        meshShader.setVec3("light.lightPos", light.transform.position);
-        meshShader.setVec3("light.lightColor", lightColor);
+        waveShader.setVec3("viewPos", camera.getPosition());
+        waveShader.setVec3("light.lightPos", light.transform.position);
+        waveShader.setVec3("light.lightColor", lightColor);
 
         // Cube Materials
-        meshShader.setFloat("material.diffuse", diffuse);
-        meshShader.setFloat("material.ambient", ambient);
-        meshShader.setFloat("material.specular", specular);
-        meshShader.setFloat("material.shininess", shininess);
+        waveShader.setFloat("material.diffuse", diffuse);
+        waveShader.setFloat("material.ambient", ambient);
+        waveShader.setFloat("material.specular", specular);
+        waveShader.setFloat("material.shininess", shininess);
 
         // Drawing the Meshes
         pattern.Bind(0);
@@ -252,7 +269,7 @@ int main()
     }
 
     // De-Allocating Resources
-    meshShader.deallocateShader();
+    waveShader.deallocateShader();
     lightShader.deallocateShader();
 
     printf("Shutting down...");
