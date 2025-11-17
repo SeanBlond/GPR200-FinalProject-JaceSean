@@ -5,59 +5,48 @@ layout (location = 2) in vec2 aTexCoord;
 
 struct Wave
 {
-
-    float time;
-
     vec2 direction;
-
-    float waveLength;
+    float wavelength;
     float steepness;
-    float amplitude;
     float speed;
-
-    //int detail;
-
+    int detail;
 };
 
 out vec3 Normal;
 out vec2 TexCoord;
 out vec3 FragPos;
 
+uniform float time;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform Wave hiWave;
+uniform Wave wave;
+
+const float PI = 3.14159265; 
 
 void main()
 {
 
-    vec3 normalnormal = aNormal;
-    vec3 total = vec3(aPos.x, 0.0f, aPos.z);
-    for (int i = 0; i < 1; i ++)
+    vec3 total = vec3(aPos.x, 0.0, aPos.z);
+    for (int i = 1; i <= wave.detail; i++)
     {
-        float a, w, s;
-        a = hiWave.amplitude / (i*i);
-        w = hiWave.waveLength * i;
-        s = hiWave.speed * i;
+        // Calculating Relative Variables for every iteration
+        float a, w, s, k;
+        w = wave.wavelength * i;
+        k = (2 * PI) / w;
+        s = wave.speed * i;
+        a = (wave.steepness / k) / (i * i);
+        vec2 d = normalize(wave.direction + ((i - 1) * vec2(cos(i), sin(i))));
+        
+        // Calculating the Input that will go into the wave functions
+        float waveInput = k * (dot(d, aPos.xz) - (s * time));
 
-        float WA = w*a;
-
-        float waveBye = dot(w*hiWave.direction,total.xy + s*hiWave.time);
-        float waveCya = dot(w*hiWave.direction,total.xy + s*hiWave.time);
-
-        total.x += (hiWave.steepness * a * hiWave.direction.x) * cos(waveBye);
-        total.y += a*sin(waveBye);
-        total.z += (hiWave.steepness * a * hiWave.direction.y) * cos(waveBye);
-
-        normalnormal.x += (hiWave.direction.x * WA) * cos(waveCya);
-        normalnormal.y += (hiWave.steepness * WA) * sin(waveCya);
-        normalnormal.z += (hiWave.direction.y * WA) * cos(waveCya);
-
+        // Calculating the position modification of a vertice for a certain iteration
+        total.x += a * d.x * cos(waveInput);
+        total.y += a * sin(waveInput);
+        total.z += a * d.y * cos(waveInput);
     }
 
-    normalnormal.x *= -1;
-    normalnormal.y = 1 -normalnormal.y;
-    normalnormal.z *= -1;
 
     gl_Position = projection * view * model * vec4(total, 1);
     FragPos = vec3(model * vec4(total, 1.0));

@@ -39,7 +39,7 @@ glm::vec2 previousMousePos = glm::vec2(float(SCREEN_WIDTH) / 2.0, float(SCREEN_H
 glm::vec2 mouseDelta = glm::vec2(0.0f);
 
 // Creating Camera
-FlyCamera camera(glm::vec3(0.0f, 0.0f, 4.0f), 60.0f);
+FlyCamera camera(glm::vec3(0.0f, 1.0f, 4.0f), 60.0f);
 
 // Rendering Options
 const char* renderingOptions[] = {
@@ -92,21 +92,20 @@ int main()
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
     glm::vec2 direction = glm::vec2(1.0f, 1.0f);
-    float waveLength = 1.0f;
-    float steepness = 1.0f;
-    float amplitude = 1.0f;
+    float wavelength = 1.0f;
+    float steepness = 0.5f;
     float speed = 1.0f;
-    int detail = 1;
+    int detail = 4;
 
-    waveShader.setVec2("hiWave.direction", direction);
-    waveShader.setFloat("hiWave.waveLength", waveLength);
-    waveShader.setFloat("hiWave.steepness", steepness);
-    waveShader.setFloat("hiWave.amplitude", amplitude);
-    waveShader.setFloat("hiWave.speed", speed);
-    //waveShader.setInt("hiWave.detail", detail);
+    waveShader.useShader();
+    waveShader.setVec2("wave.direction", direction);
+    waveShader.setFloat("wave.wavelength", wavelength);
+    waveShader.setFloat("wave.steepness", steepness);
+    waveShader.setFloat("wave.speed", speed);
+    waveShader.setInt("wave.detail", detail);
 
     // Creating the Rendered Object
-    obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 16), &waveShader, glm::vec3(0));
+    obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 32), &waveShader, glm::vec3(0));
 
     // Creating pointers to the primitive's settings
     PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());
@@ -149,7 +148,6 @@ int main()
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        waveShader.setFloat("hiWave.time", glfwGetTime());
 
         // Perspective/View Transformation Matrices
         if (camera.getDoPerspective())
@@ -169,8 +167,8 @@ int main()
 
         // Cube Texture Management
         waveShader.useShader();
-        waveShader.setFloat("time", glfwGetTime());
         waveShader.setInt("texture1", 0);
+        waveShader.setFloat("time", glfwGetTime());
 
         // Drawing the Light
         light.shader->useShader();
