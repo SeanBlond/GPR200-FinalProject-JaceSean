@@ -91,18 +91,13 @@ int main()
     shdr::Shader waveShader("assets/shaders/waveVert.glsl", "assets/shaders/cubeFrag.glsl");
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
+    // Wave Settings
     glm::vec2 direction = glm::vec2(1.0f, 1.0f);
     float wavelength = 1.0f;
     float steepness = 0.5f;
     float speed = 1.0f;
     int detail = 4;
 
-    waveShader.useShader();
-    waveShader.setVec2("wave.direction", direction);
-    waveShader.setFloat("wave.wavelength", wavelength);
-    waveShader.setFloat("wave.steepness", steepness);
-    waveShader.setFloat("wave.speed", speed);
-    waveShader.setInt("wave.detail", detail);
 
     // Creating the Rendered Object
     obj::Object wavePlane("plane", mesh::createPlane(8.0f, 8.0f, 32), &waveShader, glm::vec3(0));
@@ -165,10 +160,15 @@ int main()
 
         view = camera.getViewMatrix();
 
-        // Cube Texture Management
+        // Wave Settings Management
         waveShader.useShader();
         waveShader.setInt("texture1", 0);
         waveShader.setFloat("time", glfwGetTime());
+        waveShader.setVec2("wave.direction", direction);
+        waveShader.setFloat("wave.wavelength", wavelength);
+        waveShader.setFloat("wave.steepness", steepness);
+        waveShader.setFloat("wave.speed", speed);
+        waveShader.setInt("wave.detail", detail);
 
         // Drawing the Light
         light.shader->useShader();
@@ -249,11 +249,17 @@ int main()
         }
 
         // Plane Settings
-        if (ImGui::CollapsingHeader("Plane Settings"))
+        if (ImGui::CollapsingHeader("Wave Settings"))
         {
             ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.0f);
             ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.0f);
             ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 32);
+            ImGui::Text("\nWave Vertex Shader");
+            ImGui::DragFloat2("Direction", &(direction.x), 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Wavelength", &(wavelength), 0.1f, 0.0f);
+            ImGui::DragFloat("Steepness", &(steepness), 0.1f, 0.0f, 1.0f);
+            ImGui::DragFloat("Speed", &(speed), 0.1f);
+            ImGui::DragInt("Detail", &(detail), 1.0f, 1, 16);
         }
 
         ImGui::End();
