@@ -9,7 +9,6 @@ struct Wave
     float wavelength;
     float steepness;
     float speed;
-    int detail;
 };
 
 out vec3 Normal;
@@ -20,7 +19,8 @@ uniform float time;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform Wave wave;
+uniform int numWaves;
+uniform Wave wave[10];
 
 const float PI = 3.14159265; 
 
@@ -28,15 +28,15 @@ void main()
 {
 
     vec3 total = vec3(aPos.x, 0.0, aPos.z);
-    for (int i = 1; i <= wave.detail; i++)
+    for (int i = 0; i < numWaves; i++)
     {
         // Calculating Relative Variables for every iteration
         float a, w, s, k;
-        w = wave.wavelength * i;
+        w = wave[i].wavelength;
         k = (2 * PI) / w;
-        s = wave.speed * i;
-        a = (wave.steepness / k) / (i * i);
-        vec2 d = normalize(wave.direction + ((i - 1) * vec2(cos(i), sin(i))));
+        s = wave[i].speed;
+        a = (wave[i].steepness / k);
+        vec2 d = normalize(wave[i].direction);
         
         // Calculating the Input that will go into the wave functions
         float waveInput = k * (dot(d, aPos.xz) - (s * time));

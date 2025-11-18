@@ -91,16 +91,8 @@ int main()
     shdr::Shader waveShader("assets/shaders/waveVert.glsl", "assets/shaders/cubeFrag.glsl");
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
-    // Wave Settings
-    glm::vec2 direction = glm::vec2(1.0f, 1.0f);
-    float wavelength = 1.0f;
-    float steepness = 1.0f;
-    float speed = 1.0f;
-    int detail = 2;
-
-
     // Creating the Rendered Object
-    obj::Object wavePlane("ocean", mesh::createPlane(8.0f, 8.0f, 32), &waveShader, glm::vec3(0));
+    obj::Object wavePlane("ocean", mesh::createPlane(8.0f, 8.0f, 64), &waveShader, glm::vec3(0));
 
     // Creating pointers to the primitive's settings
     PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());

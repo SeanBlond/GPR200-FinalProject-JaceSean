@@ -15,7 +15,7 @@ set(CORE_INC_DIR
  CACHE PATH "CORE INCLUDE SOURCE PATH"
 )
 
-add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/shader.cpp" "object/object.h" "object/object.cpp" "object/mesh.h" "object/mesh.cpp" "math/smath.h" "Camera/camera.h" "Camera/camera.cpp")
+add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/shader.cpp" "object/object.h" "object/object.cpp" "object/mesh.h" "object/mesh.cpp" "math/smath.h" "Camera/camera.h" "Camera/camera.cpp" "Wave/waves.cpp" "Wave/waves.h")
 
 find_package(OpenGL REQUIRED)
 
