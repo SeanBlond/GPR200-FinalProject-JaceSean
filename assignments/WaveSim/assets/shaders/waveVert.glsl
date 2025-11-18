@@ -20,7 +20,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform int numWaves;
-uniform Wave wave[10];
+uniform Wave waves[10];
 
 const float PI = 3.14159265; 
 
@@ -32,11 +32,11 @@ void main()
     {
         // Calculating Relative Variables for every iteration
         float a, w, s, k;
-        w = wave[i].wavelength;
+        w = waves[i].wavelength;
         k = (2 * PI) / w;
-        s = wave[i].speed;
-        a = (wave[i].steepness / k);
-        vec2 d = normalize(wave[i].direction);
+        s = waves[i].speed;
+        a = (waves[i].steepness / k);
+        vec2 d = normalize(waves[i].direction);
         
         // Calculating the Input that will go into the wave functions
         float waveInput = k * (dot(d, aPos.xz) - (s * time));

@@ -17,6 +17,7 @@
 #include <Camera/camera.h>
 #include <shader/shader.h>
 #include <math/smath.h>
+#include <Wave/waves.h>
 
 
 // Screen Info
@@ -97,6 +98,10 @@ int main()
     // Creating pointers to the primitive's settings
     PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());
 
+    // Wave Settings
+    hiWave::WaveSystem wavez;
+    wavez.AddRandomWave();
+
     // Objects Material Settings
     float ambient = 0.5f;
     float diffuse = 0.5f;
@@ -156,11 +161,7 @@ int main()
         waveShader.useShader();
         waveShader.setInt("texture1", 0);
         waveShader.setFloat("time", glfwGetTime());
-        waveShader.setVec2("wave.direction", direction);
-        waveShader.setFloat("wave.wavelength", wavelength);
-        waveShader.setFloat("wave.steepness", steepness);
-        waveShader.setFloat("wave.speed", speed);
-        waveShader.setInt("wave.detail", detail);
+        wavez.PassValues(&waveShader);
 
         // Drawing the Light
         light.shader->useShader();
@@ -247,11 +248,6 @@ int main()
             ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.0f);
             ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 32);
             ImGui::Text("\nWave Vertex Shader");
-            ImGui::DragFloat2("Direction", &(direction.x), 0.1f, 0.0f, 1.0f);
-            ImGui::DragFloat("Wavelength", &(wavelength), 0.1f, 0.0f);
-            ImGui::DragFloat("Steepness", &(steepness), 0.1f, 0.0f, 1.0f);
-            ImGui::DragFloat("Speed", &(speed), 0.1f);
-            ImGui::DragInt("Detail", &(detail), 1.0f, 1, 16);
         }
 
         ImGui::End();
