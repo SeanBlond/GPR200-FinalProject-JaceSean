@@ -101,6 +101,7 @@ int main()
     // Wave Settings
     hiWave::WaveSystem wavez;
     wavez.AddRandomWave();
+    wavez.AddRandomWave();
 
     // Objects Material Settings
     float ambient = 0.5f;
@@ -241,14 +242,28 @@ int main()
             ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 1024.0f);
         }
 
-        // Plane Settings
+        // Wave Settings
         if (ImGui::CollapsingHeader("Wave Settings"))
         {
             ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.0f);
             ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.0f);
             ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 32);
             ImGui::Text("\nWave Vertex Shader");
+
+            // Generating a setting for each wave
+            for (int i = 0; i < wavez.getWaveCount(); i++)
+            {
+                std::string waveSettingName = "Wave Settings" + std::to_string(i);
+                if (ImGui::CollapsingHeader(waveSettingName.c_str()))
+                {
+                    ImGui::DragFloat2("Direction", &(wavez.getWave(i)->direction.x), 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat("Wavelength", &(wavez.getWave(i)->wavelength), 0.1f, 0.0f);
+                    ImGui::DragFloat("Steepness", &(wavez.getWave(i)->steepness), 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat("Speed", &(wavez.getWave(i)->speed), 0.1f);
+                }
+            }
         }
+
 
         ImGui::End();
 
