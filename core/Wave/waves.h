@@ -14,9 +14,8 @@ namespace hiWave
         glm::vec2 direction = glm::vec2(1.0f, 1.0f);
         float wavelength = 1.0f;
         float steepness = 1.0f;
-        float speed = 1.0f;
 
-        WaveSettings(glm::vec2 direction, float wavelength, float steepness, float speed) : direction(direction), wavelength(wavelength), steepness(steepness), speed(speed) {}
+        WaveSettings(glm::vec2 direction, float wavelength, float steepness) : direction(direction), wavelength(wavelength), steepness(steepness) {}
     };
 
     class WaveSystem
@@ -34,6 +33,7 @@ namespace hiWave
         void AddRandomWave();
         void AddWave(WaveSettings* wave);
         void RemoveWave(int index);
+        void RemoveAllWaves();
         void PassValues(shdr::Shader* shader);
 
     private:

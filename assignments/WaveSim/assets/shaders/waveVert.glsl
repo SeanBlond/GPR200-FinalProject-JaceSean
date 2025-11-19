@@ -8,7 +8,6 @@ struct Wave
     vec2 direction;
     float wavelength;
     float steepness;
-    float speed;
 };
 
 out vec3 Normal;
@@ -34,7 +33,7 @@ void main()
         float a, w, s, k;
         w = waves[i].wavelength;
         k = (2 * PI) / w;
-        s = waves[i].speed;
+        s = sqrt(9.8f / k);
         a = (waves[i].steepness / k);
         vec2 d = normalize(waves[i].direction);
         

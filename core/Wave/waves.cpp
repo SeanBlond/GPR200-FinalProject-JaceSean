@@ -19,12 +19,12 @@ void WaveSystem::AddRandomWave()
 	direction.x = ew::RandomRange(-1.0f, 1.0f);
 	direction.y = ew::RandomRange(-1.0f, 1.0f);
 
-	wavelength = ew::RandomRange(1.0f, 60.0f);
+	wavelength = ew::RandomRange(1.0f, 10.0f);
 	steepness = ew::RandomRange(0.1f, 1.0f);
-	speed = ew::RandomRange(0.5f, 20.0f);
+	speed = ew::RandomRange(-8.0f, 8.0f);
 
 	// Adding WaveSettings
-	AddWave(new WaveSettings(direction, wavelength, steepness, speed));
+	AddWave(new WaveSettings(direction, wavelength, steepness));
 }
 void WaveSystem::AddWave(WaveSettings* wave)
 {
@@ -42,6 +42,11 @@ void WaveSystem::RemoveWave(int index)
 		waveCount--;
 	}
 }
+void WaveSystem::RemoveAllWaves() {
+	for (int i = waveCount; i >= 0; i--) {
+		RemoveWave(i);
+	}
+}
 void WaveSystem::PassValues(shdr::Shader* shader)
 {
 	shader->setInt("numWaves", waveCount);
@@ -52,6 +57,5 @@ void WaveSystem::PassValues(shdr::Shader* shader)
 		shader->setVec2((waveSettingName + ".direction"), waves[i]->direction);
 		shader->setFloat((waveSettingName + ".wavelength"), waves[i]->wavelength);
 		shader->setFloat((waveSettingName + ".steepness"), waves[i]->steepness);
-		shader->setFloat((waveSettingName + ".speed"), waves[i]->speed);
 	}
 }

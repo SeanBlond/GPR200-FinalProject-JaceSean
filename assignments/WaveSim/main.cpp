@@ -110,6 +110,11 @@ int main()
     float specular = 0.5f;
     float shininess = 4.0f;
 
+    // Wave Settings
+    glm::vec2 newWaveDirection;
+    float newWaveWavelength = 1.0f;
+    float newWaveSteepness = 0.1f;
+
     // Creating the light
     obj::Object light("light", mesh::createSphere(0.1f, 8), &lightShader);
 
@@ -246,9 +251,27 @@ int main()
         // Wave Settings
         if (ImGui::CollapsingHeader("Wave Settings"))
         {
-            ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.0f);
-            ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.0f);
-            ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 32);
+            ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.1f);
+            ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.1f);
+            ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 128);
+            if (ImGui::CollapsingHeader("Wave Management")) {
+
+                ImGui::DragFloat2("Direction", &newWaveDirection.x, 0.1f, -1.0f, 1.0f);
+                ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 10.0f);
+                ImGui::DragFloat("Steepness", &newWaveSteepness, 0.1f, 0.1f, 1.0f);
+
+                if (ImGui::Button("Add Wave")) {
+
+                    wavez.AddWave(new hiWave::WaveSettings(newWaveDirection, newWaveWavelength, newWaveSteepness));
+                }
+                if (ImGui::Button("Add Rand Wave")) {
+                    wavez.AddRandomWave();
+                }
+                if (ImGui::Button("Remove All Waves")) {
+                    wavez.RemoveAllWaves();
+                }
+            }
+
             ImGui::Text("\nWave Vertex Shader");
 
             // Generating a setting for each wave
@@ -257,10 +280,12 @@ int main()
                 std::string waveSettingName = "Wave Settings - " + std::to_string(i);
                 if (ImGui::CollapsingHeader(waveSettingName.c_str()))
                 {
-                    ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, 0.0f, 1.0f);
-                    ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.0f);
-                    ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.0f, 1.0f);
-                    ImGui::DragFloat(("Speed " + std::to_string(i)).c_str(), &(wavez.getWave(i)->speed), 0.1f);
+                    ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, -1.0f, 1.0f);
+                    ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.1f, 10.0f);
+                    ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.1f, 1.0f);
+                    if (ImGui::Button("KILL Wave")) {
+                        wavez.RemoveWave(i);
+                    }
                 }
             }
         }
