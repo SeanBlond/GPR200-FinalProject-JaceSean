@@ -3,6 +3,7 @@
 #include <math.h>
 
 // IMGUI Stuff
+#include <charconv>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -253,13 +254,13 @@ int main()
             // Generating a setting for each wave
             for (int i = 0; i < wavez.getWaveCount(); i++)
             {
-                std::string waveSettingName = "Wave Settings" + std::to_string(i);
+                std::string waveSettingName = "Wave Settings - " + std::to_string(i);
                 if (ImGui::CollapsingHeader(waveSettingName.c_str()))
                 {
-                    ImGui::DragFloat2("Direction", &(wavez.getWave(i)->direction.x), 0.1f, 0.0f, 1.0f);
-                    ImGui::DragFloat("Wavelength", &(wavez.getWave(i)->wavelength), 0.1f, 0.0f);
-                    ImGui::DragFloat("Steepness", &(wavez.getWave(i)->steepness), 0.1f, 0.0f, 1.0f);
-                    ImGui::DragFloat("Speed", &(wavez.getWave(i)->speed), 0.1f);
+                    ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.0f);
+                    ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat(("Speed " + std::to_string(i)).c_str(), &(wavez.getWave(i)->speed), 0.1f);
                 }
             }
         }
