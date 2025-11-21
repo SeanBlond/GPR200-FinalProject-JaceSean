@@ -43,8 +43,9 @@ void WaveSystem::RemoveWave(int index)
 	}
 }
 void WaveSystem::RemoveAllWaves() {
-	for (int i = waveCount; i >= 0; i--) {
-		RemoveWave(i);
+	int waveAmount = waveCount;
+	for (int i = 0; i < waveAmount; i++) {
+		RemoveWave(0);
 	}
 }
 void WaveSystem::PassValues(shdr::Shader* shader)
