@@ -74,12 +74,22 @@ void Mesh::DrawMesh(bool lines, bool points)
 
     glBindVertexArray(0);
 }
-void Mesh::updateMesh(Mesh* mesh)
+void Mesh::updateMesh(const Mesh& mesh)
 {
-    this->vertices = mesh->vertices;
-    this->indices = mesh->indices;
+    this->vertices = mesh.vertices;
+    this->indices = mesh.indices;
 
-    createMesh();
+    glBindVertexArray(VAO);
+
+    std::cout << "Updating mesh with " << vertices.size() << " vertices" << std::endl;
+
+    // Updating VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_DYNAMIC_DRAW);
+
+    // Updating EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
 }
 void Mesh::outputMesh()
 {
@@ -96,104 +106,9 @@ void Mesh::outputMesh()
 // Operators
 Mesh Mesh::operator=(const Mesh &aMesh)
 {
-    this->vertices = aMesh.vertices;
-    this->indices = aMesh.indices;
-    createMesh();
+    updateMesh(aMesh);
 
     return *this;
-}
-
-// Primitve Mesh Children Draw Functions
-void PlaneMesh::DrawMesh(bool lines, bool points)
-{
-    // Check for Different Values
-    if((storedWidth != width) || (storedHeight != height) || (storedSubdivisions != subdivisions))
-    {
-        // Update Values and Mesh
-        storedWidth = width;
-        storedHeight = height;
-        storedSubdivisions = subdivisions;
-
-        // Update Mesh Data
-        Mesh::updateMesh(mesh::createPlane(storedWidth, storedHeight, storedSubdivisions));
-    }
-
-    // Render Mesh
-    Mesh::DrawMesh(lines, points);
-
-}
-void CubeMesh::DrawMesh(bool lines, bool points)
-{
-    // Check for Different Values
-    if((storedWidth != width) || (storedHeight != height) || (storedLength != length) || (storedSubdivisions != subdivisions))
-    {
-        // Update Values and Mesh
-        storedWidth = width;
-        storedHeight = height;
-        storedLength = length;
-        storedSubdivisions = subdivisions;
-
-        // Update Mesh Data
-        Mesh::updateMesh(mesh::createCube(storedLength, storedWidth, storedHeight, storedSubdivisions));
-    }
-
-    // Render Mesh
-    Mesh::DrawMesh(lines, points);
-
-}
-void SphereMesh::DrawMesh(bool lines, bool points)
-{
-    // Check for Different Values
-    if ((storedRadius != radius) || (storedSubdivisions != subdivisions))
-    {
-        // Update Values and Mesh
-        storedRadius = radius;
-        storedSubdivisions = subdivisions;
-
-        // Update Mesh Data
-        Mesh::updateMesh(mesh::createSphere(storedRadius, storedSubdivisions));
-    }
-
-    // Render Mesh
-    Mesh::DrawMesh(lines, points);
-
-}
-void CylinderMesh::DrawMesh(bool lines, bool points)
-{
-    // Check for Different Values
-    if ((storedRadius != radius) || (storedHeight != height) || (storedSubdivisions != subdivisions))
-    {
-        // Update Values and Mesh
-        storedRadius = radius;
-        storedHeight = height;
-        storedSubdivisions = subdivisions;
-
-        // Update Mesh Data
-        Mesh::updateMesh(mesh::createCylinder(storedRadius, storedHeight, storedSubdivisions));
-    }
-
-    // Render Mesh
-    Mesh::DrawMesh(lines, points);
-
-}
-void TorusMesh::DrawMesh(bool lines, bool points)
-{
-    // Check for Different Values
-    if ((storedMajorRadius != majorRadius) || (storedMinorRadius != minorRadius) || (storedMajorSegments != majorSegments) || (storedMinorSegments != minorSegments))
-    {
-        // Update Values and Mesh
-        storedMajorRadius = majorRadius;
-        storedMinorRadius = minorRadius;
-        storedMajorSegments = majorSegments;
-        storedMinorSegments = minorSegments;
-
-        // Update Mesh Data
-        Mesh::updateMesh(mesh::createTorus(storedMajorRadius, storedMinorRadius, storedMajorSegments, storedMinorSegments));
-    }
-
-    // Render Mesh
-    Mesh::DrawMesh(lines, points);
-
 }
 
 // Extra Functions
@@ -406,7 +321,7 @@ extern Mesh* mesh::createSphere(float radius, int segments)
     }
 
     // Returning Mesh
-    return new SphereMesh(vertices, indices, radius, segments);
+    return new Mesh(vertices, indices);
 }
 extern Mesh* mesh::createCylinder(float radius, float height, int segments)
 {
@@ -524,7 +439,7 @@ extern Mesh* mesh::createCylinder(float radius, float height, int segments)
     }
 
     // Returning Mesh
-    return new CylinderMesh(vertices, indices, radius, height, segments);
+    return new Mesh(vertices, indices);
 }
 extern Mesh* mesh::createPlane(float width, float height, int segments)
 {
@@ -588,7 +503,7 @@ extern Mesh* mesh::createPlane(float width, float height, int segments)
     }
 
     // Returning Mesh
-    return new PlaneMesh(vertices, indices, width, height, segments);
+    return new Mesh(vertices, indices);
 }
 extern Mesh* mesh::createTorus(float majorRadius, float minorRadius, int majorSegments, int minorSegments)
 {
@@ -655,7 +570,7 @@ extern Mesh* mesh::createTorus(float majorRadius, float minorRadius, int majorSe
     }
 
     // Returning Mesh Data
-    return new TorusMesh(vertices, indices, majorRadius, minorRadius, majorSegments, minorSegments);
+    return new Mesh(vertices, indices);
 }
 extern Mesh* mesh::createCube(float length, float width, float height, int segments)
 {
@@ -808,5 +723,5 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
         }
     }
     // Returning Mesh Data
-    return new CubeMesh(vertices, indices, width, height, length, segments);
+    return new Mesh(vertices, indices);
 }

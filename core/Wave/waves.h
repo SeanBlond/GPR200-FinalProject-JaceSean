@@ -22,12 +22,14 @@ namespace hiWave
     {
     public:
         // Constructor & Deocntructor
-        WaveSystem() : waveCount(0) {}
+        WaveSystem() : waveCount(0), decreaseWaves(false) {}
         ~WaveSystem();
 
         // Getters
         WaveSettings* getWave(int index) { return waves[index]; }
         int getWaveCount() { return waveCount; }
+        bool getDecreaseWaves() { return decreaseWaves; }
+        bool* getDecreaseWavesAddress() { return &decreaseWaves; }
 
         // Functions
         void AddRandomWave();
@@ -38,6 +40,7 @@ namespace hiWave
 
     private:
         int waveCount;
+        bool decreaseWaves;
         const int MAX_WAVES = 10;
         std::vector<WaveSettings*> waves;
     };

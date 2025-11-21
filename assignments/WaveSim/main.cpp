@@ -94,10 +94,13 @@ int main()
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
     // Creating the Rendered Object
-    obj::Object wavePlane("ocean", mesh::createPlane(8.0f, 8.0f, 64), &waveShader, glm::vec3(0));
+    float width = 8.0f;
+    float height = 8.0f;
+    int subdivisions = 128;
+    obj::Object wavePlane("ocean", mesh::createPlane(width, height, subdivisions), &waveShader, glm::vec3(0));
 
     // Creating pointers to the primitive's settings
-    PlaneMesh* wavePlanePtr = dynamic_cast<PlaneMesh*>(wavePlane.getMesh());
+    Mesh* wavePlanePtr = wavePlane.getMesh();
 
     // Wave Settings
     hiWave::WaveSystem wavez;
@@ -251,15 +254,21 @@ int main()
         // Wave Settings
         if (ImGui::CollapsingHeader("Wave Settings"))
         {
-            ImGui::DragFloat("Width", &(wavePlanePtr->width), 0.1f, 0.1f);
-            ImGui::DragFloat("Height", &(wavePlanePtr->height), 0.1f, 0.1f);
-            ImGui::DragInt("Subdivisions", &(wavePlanePtr->subdivisions), 1, 1, 128);
+            if (
+                ImGui::DragFloat("Width", &(width), 0.1f, 0.1f) || 
+                ImGui::DragFloat("Height", &(height), 0.1f, 0.1f) || 
+                ImGui::DragInt("Subdivisions", &(subdivisions), 1, 1, 128)
+                )
+            {
+                wavePlanePtr->updateMesh(mesh::createPlane(width, height, subdivisions));
+            }
             if (ImGui::CollapsingHeader("Wave Management")) {
 
                 ImGui::DragFloat2("Direction", &newWaveDirection.x, 0.1f, -1.0f, 1.0f);
                 ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 10.0f);
                 ImGui::DragFloat("Steepness", &newWaveSteepness, 0.1f, 0.1f, 1.0f);
-
+                
+                ImGui::Checkbox("Decrease Waves w/ Iteration", wavez.getDecreaseWavesAddress());
                 if (ImGui::Button("Add Wave")) {
 
                     wavez.AddWave(new hiWave::WaveSettings(newWaveDirection, newWaveWavelength, newWaveSteepness));
