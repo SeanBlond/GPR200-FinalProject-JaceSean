@@ -94,8 +94,8 @@ int main()
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
     // Creating the Rendered Object
-    float width = 8.0f;
-    float height = 8.0f;
+    float width = 20.0f;
+    float height = 20.0f;
     int subdivisions = 128;
     obj::Object wavePlane("ocean", mesh::createPlane(width, height, subdivisions), &waveShader, glm::vec3(0));
 

@@ -66,3 +66,7 @@ void WaveSystem::PassValues(shdr::Shader* shader)
 		shader->setFloat((waveSettingName + ".steepness"), modifiedSteepness);
 	}
 }
+void WaveSystem::CreatePerfectWaves()
+{
+	RemoveAllWaves();
+}

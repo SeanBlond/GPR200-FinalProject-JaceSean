@@ -38,6 +38,8 @@ namespace hiWave
         void RemoveAllWaves();
         void PassValues(shdr::Shader* shader);
 
+        void CreatePerfectWaves();
+
     private:
         int waveCount;
         bool decreaseWaves;
