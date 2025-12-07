@@ -107,11 +107,12 @@ int main()
     wavez.AddRandomWave();
     wavez.AddRandomWave();
 
-    // Objects Material Settings
+    // Wave Material Settings
     float ambient = 0.5f;
     float diffuse = 0.5f;
     float specular = 0.5f;
     float shininess = 4.0f;
+    glm::vec3 color = glm::vec3(0, 0, 1);
 
     // Wave Settings
     glm::vec2 newWaveDirection;
@@ -124,12 +125,6 @@ int main()
     // Light Properties
     glm::vec3 lightColor = glm::vec3(1);
     glm::vec3 lightPosition = glm::vec3(0.0f, 2.0f, 0.0f);
-
-    // Creating an Image Texture
-    shdr::Texture2D pattern("assets/lobster-pattern.jpg", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
-    shdr::Texture2D earth("assets/earth-map.jpg", GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR);
-
-
 
     // Projection Matrix
     glm::mat4 projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 100.0f);
@@ -169,7 +164,6 @@ int main()
 
         // Wave Settings Management
         waveShader.useShader();
-        waveShader.setInt("texture1", 0);
         waveShader.setFloat("time", glfwGetTime());
         wavez.PassValues(&waveShader);
 
@@ -197,9 +191,9 @@ int main()
         waveShader.setFloat("material.ambient", ambient);
         waveShader.setFloat("material.specular", specular);
         waveShader.setFloat("material.shininess", shininess);
+        waveShader.setVec3("color", color);
 
         // Drawing the Meshes
-        pattern.Bind(0);
         wavePlane.DrawMesh(renderLines, renderPoints);
 
         // ImGUI Rendering
@@ -249,6 +243,7 @@ int main()
             ImGui::DragFloat("Diffuse", &diffuse, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Specular", &specular, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 1024.0f);
+            ImGui::ColorPicker3("Color", &color.x);
         }
 
         // Wave Settings

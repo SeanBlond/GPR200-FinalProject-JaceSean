@@ -21,17 +21,13 @@ struct Light
 uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
+uniform vec3 color;
 uniform int renderOption;
 
 void main()
 {
     // Creating the Texture Color 
     vec2 uv = TexCoord;
-    vec3 color;
-    vec4 face = texture(texture2, uv);
-    color = mix(texture(texture1, uv), face, face.a).xyz;
 
     // Ambient
     vec3 ambient = material.ambient * color;
