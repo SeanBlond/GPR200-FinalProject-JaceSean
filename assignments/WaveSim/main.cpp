@@ -107,13 +107,13 @@ int main()
     wavez.CreatePerfectWaves();
 
     // Wave Material Settings
-    float waveAmbient = 0.5f;
-    float waveDiffuse = 0.25f;
+    float waveAmbient = 0.8f;
+    float waveDiffuse = 0.1f;
     float waveSpecular = 1.0f;
-    float waveShininess = 32.0f;
-    glm::vec3 colorWave = glm::vec3(0.1, 0.1, 0.8);
+    float waveShininess = 64.0f;
+    glm::vec3 colorWave = glm::vec3(0.31, 0.42, 1.0);
     glm::vec3 foamColor = glm::vec3(0.95, 0.95, 1.0);
-    float foamAmount = 0.5f;
+    float foamAmount = 0.6f;
 
     // Wave Settings
     glm::vec2 newWaveDirection = glm::vec2(0.0f, 1.0f);
@@ -126,8 +126,10 @@ int main()
     // Light Properties
     glm::vec3 lightColor = glm::vec3(1);
     glm::vec3 lightPosition = glm::vec3(0.0f, 15.0f, 0.0f);
+    glm::vec3 backgroundColor = glm::vec3(0.35f, 0.54f, 0.85f);
 
     // Projection Matrix
+    camera.setSpeed(15.0f);
     glm::mat4 projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 1000.0f);
     glm::mat4 view = camera.getViewMatrix();
 
@@ -137,7 +139,7 @@ int main()
         processInput(window);
 
         //Clear framebuffer
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -237,6 +239,7 @@ int main()
         {
             ImGui::DragFloat3("Light Position", &lightPosition.x, 0.1f);
             ImGui::ColorEdit3("Light Color", &lightColor.r);
+            ImGui::ColorEdit3("Background Color", &backgroundColor.r);
         }
         ImGui::End();
 
@@ -298,9 +301,10 @@ int main()
         ImGui::DragFloat("Diffuse", &waveDiffuse, 0.1f, 0.0f, 1.0f);
         ImGui::DragFloat("Specular", &waveSpecular, 0.1f, 0.0f, 1.0f);
         ImGui::DragFloat("Shininess", &waveShininess, 1.0f, 2.0f, 1024.0f);
-        ImGui::ColorPicker3("Wave Color", &colorWave.x);
+        ImGui::Text("\n");
+        ImGui::ColorEdit3("Wave Color", &colorWave.x);
         ImGui::DragFloat("Foam Amount", &foamAmount, 0.1f, 0.0f, 1.0f);
-        ImGui::ColorPicker3("Foam Color", &foamColor.x);
+        ImGui::ColorEdit3("Foam Color", &foamColor.x);
         ImGui::End();
 
         // Rendering ImGUI Window

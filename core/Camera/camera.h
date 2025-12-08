@@ -94,7 +94,6 @@ public:
     void setCameraPos(glm::vec3 pos);
     void setYaw(float yaw);
     void setPitch(float pitch);
-    void setSpeed(float speed);
     void addYaw(float yaw);
     void addPitch(float pitch);
 
