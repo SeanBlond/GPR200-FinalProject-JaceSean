@@ -108,10 +108,10 @@ int main()
 
     // Wave Material Settings
     float waveAmbient = 0.8f;
-    float waveDiffuse = 0.1f;
+    float waveDiffuse = 0.0f;
     float waveSpecular = 1.0f;
     float waveShininess = 64.0f;
-    glm::vec3 colorWave = glm::vec3(0.31, 0.42, 1.0);
+    glm::vec3 colorWave = glm::vec3(0.31, 0.6, 1.0);
     glm::vec3 foamColor = glm::vec3(0.95, 0.95, 1.0);
     float foamAmount = 0.6f;
 
@@ -120,12 +120,9 @@ int main()
     float newWaveWavelength = 1.0f;
     float newWaveSteepness = 0.1f;
 
-    // Creating the light
-    obj::Object light("light", mesh::createSphere(0.1f, 8), &lightShader);
-
-    // Light Properties
+    // Light / Scene Properties
     glm::vec3 lightColor = glm::vec3(1);
-    glm::vec3 lightPosition = glm::vec3(0.0f, 15.0f, 0.0f);
+    glm::vec3 lightDirection = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 backgroundColor = glm::vec3(0.35f, 0.54f, 0.85f);
 
     // Projection Matrix
@@ -170,14 +167,6 @@ int main()
         waveShader.setFloat("time", glfwGetTime());
         wavez.PassValues(&waveShader);
 
-        // Drawing the Light
-        light.shader->useShader();
-        light.shader->setMat4("projection", projection);
-        light.shader->setMat4("view", view);
-        light.shader->setVec3("color", lightColor);
-        light.transform.position = lightPosition;
-        light.DrawMesh(renderLines, renderPoints);
-
         // Mesh Settings
         waveShader.useShader();
         waveShader.setMat4("projection", projection);
@@ -186,7 +175,7 @@ int main()
 
         // Light Settings
         waveShader.setVec3("viewPos", camera.getPosition());
-        waveShader.setVec3("light.lightPos", light.transform.position);
+        waveShader.setVec3("light.lightDirection", lightDirection);
         waveShader.setVec3("light.lightColor", lightColor);
 
         // Cube Materials
@@ -237,7 +226,7 @@ int main()
         // Light Settings
         if (ImGui::CollapsingHeader("Light Settings"))
         {
-            ImGui::DragFloat3("Light Position", &lightPosition.x, 0.1f);
+            ImGui::DragFloat3("Light Direction", &lightDirection.x, 0.1f);
             ImGui::ColorEdit3("Light Color", &lightColor.r);
             ImGui::ColorEdit3("Background Color", &backgroundColor.r);
         }
@@ -249,7 +238,7 @@ int main()
         if (
             ImGui::DragFloat("Width", &(width), 0.1f, 0.1f) || 
             ImGui::DragFloat("Height", &(height), 0.1f, 0.1f) || 
-            ImGui::DragInt("Subdivisions", &(subdivisions), 1, 1, 128)
+            ImGui::DragInt("Subdivisions", &(subdivisions), 1, 1, 256)
             )
         {
             wavePlanePtr->updateMesh(mesh::createPlane(width, height, subdivisions));
@@ -258,7 +247,7 @@ int main()
         ImGui::Text("\nProcedural Wave Settings");
 
         ImGui::DragFloat2("Direction", &newWaveDirection.x, 0.1f, -1.0f, 1.0f);
-        ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 80.0f);
+        ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 120.0f);
         ImGui::DragFloat("Steepness", &newWaveSteepness, 0.1f, 0.1f, 1.0f);
                 
         ImGui::Checkbox("Decrease Waves w/ Iteration", wavez.getDecreaseWavesAddress());
@@ -285,7 +274,7 @@ int main()
             if (ImGui::CollapsingHeader(waveSettingName.c_str()))
             {
                 ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, -1.0f, 1.0f);
-                ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.1f, 80.0f);
+                ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.1f, 120.0f);
                 ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.1f, 1.0f);
                 if (ImGui::Button("KILL Wave")) {
                     wavez.RemoveWave(i);

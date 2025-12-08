@@ -73,7 +73,8 @@ void WaveSystem::CreatePerfectWaves()
 	for (int i = 0; i < 5; i++)
 	{
 		float angle = ew::RandomRange(0.0f, ew::TAU);
-		AddWave(new WaveSettings(glm::vec2(cos(angle), sin(angle)), 60 * pow(0.5, i), 0.75f));
+		float wavelength = 80.0f * pow(0.577f, i);
+		AddWave(new WaveSettings(glm::vec2(cos(angle), sin(angle)), wavelength, 0.75f));
 
 	}
 }
