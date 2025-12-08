@@ -90,12 +90,12 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // Creating Shader(s)
-    shdr::Shader waveShader("assets/shaders/waveVert.glsl", "assets/shaders/cubeFrag.glsl");
+    shdr::Shader waveShader("assets/shaders/waveVert.glsl", "assets/shaders/waveFrag.glsl");
     shdr::Shader lightShader("assets/shaders/cubeVert.glsl", "assets/shaders/lightFrag.glsl");
 
     // Creating the Rendered Object
-    float width = 20.0f;
-    float height = 20.0f;
+    float width = 200.0f;
+    float height = 200.0f;
     int subdivisions = 128;
     obj::Object wavePlane("ocean", mesh::createPlane(width, height, subdivisions), &waveShader, glm::vec3(0));
 
@@ -104,15 +104,14 @@ int main()
 
     // Wave Settings
     hiWave::WaveSystem wavez;
-    wavez.AddRandomWave();
-    wavez.AddRandomWave();
+    wavez.CreatePerfectWaves();
 
     // Wave Material Settings
     float ambient = 0.5f;
     float diffuse = 0.5f;
     float specular = 0.5f;
     float shininess = 4.0f;
-    glm::vec3 color = glm::vec3(0, 0, 1);
+    glm::vec3 colorWave = glm::vec3(0.1, 0.1, 0.8);
 
     // Wave Settings
     glm::vec2 newWaveDirection;
@@ -124,10 +123,10 @@ int main()
 
     // Light Properties
     glm::vec3 lightColor = glm::vec3(1);
-    glm::vec3 lightPosition = glm::vec3(0.0f, 2.0f, 0.0f);
+    glm::vec3 lightPosition = glm::vec3(0.0f, 15.0f, 0.0f);
 
     // Projection Matrix
-    glm::mat4 projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 100.0f);
+    glm::mat4 projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 1000.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     //Render loop
@@ -191,7 +190,7 @@ int main()
         waveShader.setFloat("material.ambient", ambient);
         waveShader.setFloat("material.specular", specular);
         waveShader.setFloat("material.shininess", shininess);
-        waveShader.setVec3("color", color);
+        waveShader.setVec3("colorWave", colorWave);
 
         // Drawing the Meshes
         wavePlane.DrawMesh(renderLines, renderPoints);
@@ -243,7 +242,7 @@ int main()
             ImGui::DragFloat("Diffuse", &diffuse, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Specular", &specular, 0.1f, 0.0f, 1.0f);
             ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 1024.0f);
-            ImGui::ColorPicker3("Color", &color.x);
+            ImGui::ColorPicker3("Color", &colorWave.x);
         }
 
         // Wave Settings
@@ -270,6 +269,9 @@ int main()
                 }
                 if (ImGui::Button("Add Rand Wave")) {
                     wavez.AddRandomWave();
+                }
+                if (ImGui::Button("Add Perfect Waves")) {
+                    wavez.CreatePerfectWaves();
                 }
                 if (ImGui::Button("Remove All Waves")) {
                     wavez.RemoveAllWaves();

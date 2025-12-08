@@ -19,7 +19,7 @@ void WaveSystem::AddRandomWave()
 	direction.x = ew::RandomRange(-1.0f, 1.0f);
 	direction.y = ew::RandomRange(-1.0f, 1.0f);
 
-	wavelength = ew::RandomRange(0.1f, 5.0f);
+	wavelength = ew::RandomRange(1.0f, 75.0f);
 	steepness = ew::RandomRange(0.1f, 1.0f);
 	speed = ew::RandomRange(-8.0f, 8.0f);
 
@@ -61,7 +61,7 @@ void WaveSystem::PassValues(shdr::Shader* shader)
 		// Modifying the steepness of the wave;
 		float modifiedSteepness = waves[i]->steepness;
 		if (decreaseWaves)
-			modifiedSteepness *= pow(0.65f, i);
+			modifiedSteepness *= pow(0.50f, i);
 
 		shader->setFloat((waveSettingName + ".steepness"), modifiedSteepness);
 	}
@@ -69,4 +69,11 @@ void WaveSystem::PassValues(shdr::Shader* shader)
 void WaveSystem::CreatePerfectWaves()
 {
 	RemoveAllWaves();
+	decreaseWaves = true;
+	for (int i = 0; i < 5; i++)
+	{
+		float angle = ew::RandomRange(0.0f, ew::TAU);
+		AddWave(new WaveSettings(glm::vec2(cos(angle), sin(angle)), 60 * pow(0.5, i), 0.75f));
+
+	}
 }

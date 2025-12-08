@@ -3,6 +3,7 @@ out vec4 FragColor;
 in vec3 Normal;
 in vec2 TexCoord;
 in vec3 FragPos;
+in float Depth;
 
 struct Material {
     float ambient;
@@ -21,7 +22,7 @@ struct Light
 uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
-uniform vec3 color;
+uniform vec3 colorWave;
 uniform int renderOption;
 
 void main()
@@ -29,14 +30,19 @@ void main()
     // Creating the Texture Color 
     vec2 uv = TexCoord;
 
+    // Color Changing
+    vec3 normal = normalize(Normal);
+    vec3 waveDeepColor = mix(colorWave*vec3(0.25), colorWave, Depth);
+    vec3 waveFoamColor = mix(colorWave, colorWave*vec3(10,10,10), Depth*2);
+    vec3 waveColor = mix(waveDeepColor, waveFoamColor, Depth);
+
     // Ambient
-    vec3 ambient = material.ambient * color;
+    vec3 ambient = material.ambient * waveColor;
 
     // Diffuse
     vec3 lightDir = normalize(light.lightPos - FragPos);
-    vec3 normal = normalize(Normal);
     float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * material.diffuse * color;
+    vec3 diffuse = diff * material.diffuse * waveColor;
 
     // Specular
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -55,6 +61,7 @@ void main()
     }
     else // Rendering Shaded Color
     {
-        FragColor = vec4(ambient + diffuse + specular, 1.0);
+        //FragColor = vec4(ambient + diffuse + specular, 1.0);
+        FragColor = vec4(waveColor, 1.0);
     }
 }

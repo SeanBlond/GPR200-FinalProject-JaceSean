@@ -13,6 +13,7 @@ struct Wave
 out vec3 Normal;
 out vec2 TexCoord;
 out vec3 FragPos;
+out float Depth;
 
 uniform float time;
 uniform mat4 model;
@@ -25,8 +26,8 @@ const float PI = 3.14159265;
 
 void main()
 {
-
-    vec3 total = vec3(aPos.x, 0.0, aPos.z);
+    float totalAmp = 0.0f;
+    vec3 total = vec3(aPos.x, aPos.y, aPos.z);
     vec3 tangent = vec3(1, 0, 0);
     vec3 binormal = vec3(0, 0, 1);
     for (int i = 0; i < numWaves; i++)
@@ -37,6 +38,7 @@ void main()
         k = (2 * PI) / w;
         s = sqrt(9.8f / k);
         a = (waves[i].steepness / k);
+        totalAmp += a;
         vec2 d = normalize(waves[i].direction);
         
         // Calculating the Input that will go into the wave functions
@@ -65,10 +67,10 @@ void main()
     // Calculating the normal
     vec3 waveNormal = normalize(cross(binormal, tangent));
 
-
     gl_Position = projection * view * model * vec4(total, 1);
     FragPos = vec3(model * vec4(total, 1.0));
     Normal = mat3(transpose(inverse(model))) * waveNormal;
+    Depth = (total.y-aPos.y)/(4*totalAmp)+0.5;
     TexCoord = aTexCoord;
 
 }
