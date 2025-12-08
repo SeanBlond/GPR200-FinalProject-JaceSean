@@ -107,14 +107,16 @@ int main()
     wavez.CreatePerfectWaves();
 
     // Wave Material Settings
-    float ambient = 0.5f;
-    float diffuse = 0.5f;
-    float specular = 0.5f;
-    float shininess = 4.0f;
+    float waveAmbient = 0.5f;
+    float waveDiffuse = 0.25f;
+    float waveSpecular = 1.0f;
+    float waveShininess = 32.0f;
     glm::vec3 colorWave = glm::vec3(0.1, 0.1, 0.8);
+    glm::vec3 foamColor = glm::vec3(0.95, 0.95, 1.0);
+    float foamAmount = 0.5f;
 
     // Wave Settings
-    glm::vec2 newWaveDirection;
+    glm::vec2 newWaveDirection = glm::vec2(0.0f, 1.0f);
     float newWaveWavelength = 1.0f;
     float newWaveSteepness = 0.1f;
 
@@ -147,7 +149,7 @@ int main()
 
         // Perspective/View Transformation Matrices
         if (camera.getDoPerspective())
-            projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 100.0f);
+            projection = smath::perspective(camera.getFOV(), ((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT), 0.1f, 1000.0f);
         else
         {
             float scale = 4.0f;
@@ -186,11 +188,13 @@ int main()
         waveShader.setVec3("light.lightColor", lightColor);
 
         // Cube Materials
-        waveShader.setFloat("material.diffuse", diffuse);
-        waveShader.setFloat("material.ambient", ambient);
-        waveShader.setFloat("material.specular", specular);
-        waveShader.setFloat("material.shininess", shininess);
+        waveShader.setFloat("material.diffuse", waveDiffuse);
+        waveShader.setFloat("material.ambient", waveAmbient);
+        waveShader.setFloat("material.specular", waveSpecular);
+        waveShader.setFloat("material.shininess", waveShininess);
         waveShader.setVec3("colorWave", colorWave);
+        waveShader.setFloat("foamLimit", foamAmount);
+        waveShader.setVec3("foamColor", foamColor);
 
         // Drawing the Meshes
         wavePlane.DrawMesh(renderLines, renderPoints);
@@ -234,69 +238,69 @@ int main()
             ImGui::DragFloat3("Light Position", &lightPosition.x, 0.1f);
             ImGui::ColorEdit3("Light Color", &lightColor.r);
         }
-
-        // Material Settings
-        if (ImGui::CollapsingHeader("Material Settings"))
-        {
-            ImGui::DragFloat("Ambient", &ambient, 0.1f, 0.0f, 1.0f);
-            ImGui::DragFloat("Diffuse", &diffuse, 0.1f, 0.0f, 1.0f);
-            ImGui::DragFloat("Specular", &specular, 0.1f, 0.0f, 1.0f);
-            ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 1024.0f);
-            ImGui::ColorPicker3("Color", &colorWave.x);
-        }
+        ImGui::End();
 
         // Wave Settings
-        if (ImGui::CollapsingHeader("Wave Settings"))
+        ImGui::Begin("Wave Geometry Settings");
+
+        if (
+            ImGui::DragFloat("Width", &(width), 0.1f, 0.1f) || 
+            ImGui::DragFloat("Height", &(height), 0.1f, 0.1f) || 
+            ImGui::DragInt("Subdivisions", &(subdivisions), 1, 1, 128)
+            )
         {
-            if (
-                ImGui::DragFloat("Width", &(width), 0.1f, 0.1f) || 
-                ImGui::DragFloat("Height", &(height), 0.1f, 0.1f) || 
-                ImGui::DragInt("Subdivisions", &(subdivisions), 1, 1, 128)
-                )
-            {
-                wavePlanePtr->updateMesh(mesh::createPlane(width, height, subdivisions));
-            }
-            if (ImGui::CollapsingHeader("Wave Management")) {
+            wavePlanePtr->updateMesh(mesh::createPlane(width, height, subdivisions));
+        }
 
-                ImGui::DragFloat2("Direction", &newWaveDirection.x, 0.1f, -1.0f, 1.0f);
-                ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 10.0f);
-                ImGui::DragFloat("Steepness", &newWaveSteepness, 0.1f, 0.1f, 1.0f);
+        ImGui::Text("\nProcedural Wave Settings");
+
+        ImGui::DragFloat2("Direction", &newWaveDirection.x, 0.1f, -1.0f, 1.0f);
+        ImGui::DragFloat("Wavelength", &newWaveWavelength, 0.1f, 0.1f, 80.0f);
+        ImGui::DragFloat("Steepness", &newWaveSteepness, 0.1f, 0.1f, 1.0f);
                 
-                ImGui::Checkbox("Decrease Waves w/ Iteration", wavez.getDecreaseWavesAddress());
-                if (ImGui::Button("Add Wave")) {
+        ImGui::Checkbox("Decrease Waves w/ Iteration", wavez.getDecreaseWavesAddress());
+        if (ImGui::Button("Add Wave")) {
 
-                    wavez.AddWave(new hiWave::WaveSettings(newWaveDirection, newWaveWavelength, newWaveSteepness));
-                }
-                if (ImGui::Button("Add Rand Wave")) {
-                    wavez.AddRandomWave();
-                }
-                if (ImGui::Button("Add Perfect Waves")) {
-                    wavez.CreatePerfectWaves();
-                }
-                if (ImGui::Button("Remove All Waves")) {
-                    wavez.RemoveAllWaves();
-                }
-            }
+            wavez.AddWave(new hiWave::WaveSettings(newWaveDirection, newWaveWavelength, newWaveSteepness));
+        }
+        if (ImGui::Button("Add Rand Wave")) {
+            wavez.AddRandomWave();
+        }
+        if (ImGui::Button("Add Perfect Waves")) {
+            wavez.CreatePerfectWaves();
+        }
+        if (ImGui::Button("Remove All Waves")) {
+            wavez.RemoveAllWaves();
+        }
 
-            ImGui::Text("\nWave Vertex Shader");
+        ImGui::Text("\nIndividual Wave Settings");
 
-            // Generating a setting for each wave
-            for (int i = 0; i < wavez.getWaveCount(); i++)
+        // Generating a setting for each wave
+        for (int i = 0; i < wavez.getWaveCount(); i++)
+        {
+            std::string waveSettingName = "Wave Settings - " + std::to_string(i);
+            if (ImGui::CollapsingHeader(waveSettingName.c_str()))
             {
-                std::string waveSettingName = "Wave Settings - " + std::to_string(i);
-                if (ImGui::CollapsingHeader(waveSettingName.c_str()))
-                {
-                    ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, -1.0f, 1.0f);
-                    ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.1f, 10.0f);
-                    ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.1f, 1.0f);
-                    if (ImGui::Button("KILL Wave")) {
-                        wavez.RemoveWave(i);
-                    }
+                ImGui::DragFloat2(("Direction " + std::to_string(i)).c_str(), &(wavez.getWave(i)->direction.x), 0.1f, -1.0f, 1.0f);
+                ImGui::DragFloat(("Wavelength " + std::to_string(i)).c_str(), &(wavez.getWave(i)->wavelength), 0.1f, 0.1f, 80.0f);
+                ImGui::DragFloat(("Steepness " + std::to_string(i)).c_str(), &(wavez.getWave(i)->steepness), 0.1f, 0.1f, 1.0f);
+                if (ImGui::Button("KILL Wave")) {
+                    wavez.RemoveWave(i);
                 }
             }
         }
+        ImGui::End();
 
+        ImGui::Begin("Wave Fragment Shader Settings");
 
+        // Material Settings
+        ImGui::DragFloat("Ambient", &waveAmbient, 0.1f, 0.0f, 1.0f);
+        ImGui::DragFloat("Diffuse", &waveDiffuse, 0.1f, 0.0f, 1.0f);
+        ImGui::DragFloat("Specular", &waveSpecular, 0.1f, 0.0f, 1.0f);
+        ImGui::DragFloat("Shininess", &waveShininess, 1.0f, 2.0f, 1024.0f);
+        ImGui::ColorPicker3("Wave Color", &colorWave.x);
+        ImGui::DragFloat("Foam Amount", &foamAmount, 0.1f, 0.0f, 1.0f);
+        ImGui::ColorPicker3("Foam Color", &foamColor.x);
         ImGui::End();
 
         // Rendering ImGUI Window

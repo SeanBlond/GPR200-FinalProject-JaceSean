@@ -5,6 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "../ew/ewMath/ewMath.h"
+#include "../math/smath.h"
 #include "../shader/shader.h"
 
 namespace hiWave

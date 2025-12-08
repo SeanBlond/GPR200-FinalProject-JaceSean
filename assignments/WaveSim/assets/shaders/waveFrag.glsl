@@ -23,6 +23,8 @@ uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
 uniform vec3 colorWave;
+uniform vec3 foamColor;
+uniform float foamLimit;
 uniform int renderOption;
 
 void main()
@@ -33,8 +35,9 @@ void main()
     // Color Changing
     vec3 normal = normalize(Normal);
     vec3 waveDeepColor = mix(colorWave*vec3(0.25), colorWave, Depth);
-    vec3 waveFoamColor = mix(colorWave, colorWave*vec3(10,10,10), Depth*2);
-    vec3 waveColor = mix(waveDeepColor, waveFoamColor, Depth);
+    float foamAmount = 2.0 * max((Depth - foamLimit)/ (1.0 - foamLimit), 0.0);
+    vec3 waveColor = mix(waveDeepColor, colorWave, Depth);
+    waveColor = mix(waveColor, foamColor, foamAmount);
 
     // Ambient
     vec3 ambient = material.ambient * waveColor;
@@ -61,7 +64,7 @@ void main()
     }
     else // Rendering Shaded Color
     {
-        //FragColor = vec4(ambient + diffuse + specular, 1.0);
-        FragColor = vec4(waveColor, 1.0);
+        FragColor = vec4(ambient + diffuse + specular, 1.0);
+        //FragColor = vec4(waveColor, 1.0);
     }
 }

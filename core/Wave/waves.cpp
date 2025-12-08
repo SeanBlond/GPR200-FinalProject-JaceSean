@@ -61,7 +61,7 @@ void WaveSystem::PassValues(shdr::Shader* shader)
 		// Modifying the steepness of the wave;
 		float modifiedSteepness = waves[i]->steepness;
 		if (decreaseWaves)
-			modifiedSteepness *= pow(0.50f, i);
+			modifiedSteepness *= smath::clamp(modifiedSteepness, 0.0f, (float)pow(0.7f, i));
 
 		shader->setFloat((waveSettingName + ".steepness"), modifiedSteepness);
 	}
