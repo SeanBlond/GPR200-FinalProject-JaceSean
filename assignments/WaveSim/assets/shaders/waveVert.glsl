@@ -26,13 +26,16 @@ const float PI = 3.14159265;
 
 void main()
 {
-    float totalAmp = 0.0f;
+    // Creating Values that will be added to with each wave
+    float totalAmp = 0.0;
     vec3 total = vec3(aPos.x, aPos.y, aPos.z);
     vec3 tangent = vec3(1, 0, 0);
     vec3 binormal = vec3(0, 0, 1);
+
+    // Going through each wave in the sim
     for (int i = 0; i < numWaves; i++)
     {
-        // Calculating Relative Variables for every iteration
+        // Calculating Relative Variables for every wave iteration
         float a, w, s, k;
         w = waves[i].wavelength;
         k = (2 * PI) / w;
@@ -72,5 +75,4 @@ void main()
     Normal = mat3(transpose(inverse(model))) * waveNormal;
     Depth = (total.y-aPos.y)/(4*totalAmp)+0.5;
     TexCoord = aTexCoord;
-
 }
